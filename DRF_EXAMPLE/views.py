@@ -132,20 +132,24 @@ class ProjectAPIView(APIView):
         if id:
             try:
                 project = Project.objects.prefetch_related('members').get(id=id)
-                return Response({
+                return Response(
+                {
                     'status': status.HTTP_200_OK,
                     'message': "Project retrieved successfully",
                     'data': ProjectModelSerializer(project).data
                 }, status=status.HTTP_200_OK)
+            
             except ObjectDoesNotExist:
-                return Response({
+                return Response(
+                {
                     'status': status.HTTP_404_NOT_FOUND,
                     'message': "Project not found",
                     'data': None
                 }, status=status.HTTP_404_NOT_FOUND)
         else:
             projects = Project.objects.all().prefetch_related('members')
-            return Response({
+            return Response(
+            {
                 'status': status.HTTP_200_OK,
                 'message': "Projects retrieved successfully",
                 'data': ProjectModelSerializer(projects, many=True).data
@@ -155,12 +159,15 @@ class ProjectAPIView(APIView):
         serializer = ProjectModelSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response({
+            return Response(
+            {
                 'status': status.HTTP_201_CREATED,
                 'message': "Project created successfully",
                 'data': serializer.data
             }, status=status.HTTP_201_CREATED)
-        return Response({
+        
+        return Response(
+        {
             'status': status.HTTP_400_BAD_REQUEST,
             'message': "Invalid data",
             'data': serializer.errors
@@ -172,18 +179,22 @@ class ProjectAPIView(APIView):
             serializer = ProjectModelSerializer(instance=project, data=request.data)
             if serializer.is_valid():
                 serializer.save()
-                return Response({
+                return Response(
+                {
                     'status': status.HTTP_200_OK,
                     'message': "Project updated successfully",
                     'data': serializer.data
                 }, status=status.HTTP_200_OK)
-            return Response({
+            
+            return Response(
+            {
                 'status': status.HTTP_400_BAD_REQUEST,
                 'message': "Invalid data",
                 'data': serializer.errors
             }, status=status.HTTP_400_BAD_REQUEST)
         except ObjectDoesNotExist:
-            return Response({
+            return Response(
+            {
                 'status': status.HTTP_404_NOT_FOUND,
                 'message': "Project not found",
                 'data': None
@@ -193,13 +204,16 @@ class ProjectAPIView(APIView):
         try:
             project = Project.objects.get(id=id)
             project.delete()
-            return Response({
+            return Response(
+            {
                 'status': status.HTTP_200_OK,
                 'message': "Project deleted successfully",
                 'data': None
             }, status=status.HTTP_200_OK)
+        
         except ObjectDoesNotExist:
-            return Response({
+            return Response(
+            {
                 'status': status.HTTP_404_NOT_FOUND,
                 'message': "Project not found",
                 'data': None
@@ -211,11 +225,13 @@ class TaskAPIView(APIView):
         if id:
             try:
                 task = Task.objects.select_related('project').get(id=id)
-                return Response({
+                return Response(
+                {
                     'status': status.HTTP_200_OK,
                     'message': "Task retrieved successfully",
                     'data': TaskModelSerializer(task).data
                 }, status=status.HTTP_200_OK)
+            
             except ObjectDoesNotExist:
                 return Response({
                     'status': status.HTTP_404_NOT_FOUND,
@@ -224,7 +240,8 @@ class TaskAPIView(APIView):
                 }, status=status.HTTP_404_NOT_FOUND)
         else:
             tasks = Task.objects.all().select_related('project')
-            return Response({
+            return Response(
+            {
                 'status': status.HTTP_200_OK,
                 'message': "Tasks retrieved successfully",
                 'data': TaskModelSerializer(tasks, many=True).data
@@ -234,12 +251,15 @@ class TaskAPIView(APIView):
         serializer = TaskModelSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response({
+            return Response(
+            {
                 'status': status.HTTP_201_CREATED,
                 'message': "Task created successfully",
                 'data': serializer.data
             }, status=status.HTTP_201_CREATED)
-        return Response({
+        
+        return Response(
+        {
             'status': status.HTTP_400_BAD_REQUEST,
             'message': "Invalid data",
             'data': serializer.errors
@@ -251,18 +271,22 @@ class TaskAPIView(APIView):
             serializer = TaskModelSerializer(instance=task, data=request.data)
             if serializer.is_valid():
                 serializer.save()
-                return Response({
+                return Response(
+                {
                     'status': status.HTTP_200_OK,
                     'message': "Task updated successfully",
                     'data': serializer.data
                 }, status=status.HTTP_200_OK)
-            return Response({
+            
+            return Response(
+            {
                 'status': status.HTTP_400_BAD_REQUEST,
                 'message': "Invalid data",
                 'data': serializer.errors
             }, status=status.HTTP_400_BAD_REQUEST)
         except ObjectDoesNotExist:
-            return Response({
+            return Response(
+            {
                 'status': status.HTTP_404_NOT_FOUND,
                 'message': "Task not found",
                 'data': None
@@ -272,16 +296,18 @@ class TaskAPIView(APIView):
         try:
             task = Task.objects.get(id=id)
             task.delete()
-            return Response({
+            return Response(
+            {
                 'status': status.HTTP_200_OK,
                 'message': "Task deleted successfully",
                 'data': None
             }, status=status.HTTP_200_OK)
+        
         except ObjectDoesNotExist:
-            return Response({
+            return Response(
+            {
                 'status': status.HTTP_404_NOT_FOUND,
                 'message': "Task not found",
                 'data': None
             }, status=status.HTTP_404_NOT_FOUND)
-        
         

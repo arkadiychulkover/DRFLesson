@@ -11,7 +11,7 @@ urlpatterns = [
     path('product/<uuid:id>/', views.ProductAPIView.as_view(), name='product-detail'),
     path('sample/', views.ExampleAPIView.as_view(), name='sample-api'),
     
-    path('projects/', views.ProjectAPIView.as_view(), name='project-list'),
+    path('projects/',  views.ProjectAPIView.as_view(), name='project-list'),
     path('projects/<uuid:id>/', views.ProjectAPIView.as_view(), name='project-detail'),
     
     path('tasks/', views.TaskAPIView.as_view(), name='task-list'),
