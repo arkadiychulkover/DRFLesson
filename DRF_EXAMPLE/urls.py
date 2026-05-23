@@ -16,4 +16,7 @@ urlpatterns = [
     
     path('tasks/', views.TaskAPIView.as_view(), name='task-list'),
     path('tasks/<uuid:id>/', views.TaskAPIView.as_view(), name='task-detail'),
+
+    path('users/', views.UserAPIView.as_view(), name='user-list'),
+    path('users/<uuid:id>/', views.UserAPIView.as_view(), name='user-detail'),
 ]

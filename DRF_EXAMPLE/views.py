@@ -5,8 +5,8 @@ from rest_framework import status
 from rest_framework import viewsets
 from django.core.exceptions import ObjectDoesNotExist
 
-from .models import Product, Project, Task
-from .serializers import ProductModelSerializer, ProductSerializer, ProjectModelSerializer, TaskModelSerializer
+from .models import Product, Project, Task, User
+from .serializers import ProductModelSerializer, ProductSerializer, ProjectModelSerializer, TaskModelSerializer, UserModelSerializer
 
 class ProductViewSet(viewsets.ModelViewSet):
     queryset = Product.objects.all()
@@ -131,7 +131,7 @@ class ProjectAPIView(APIView):
     def get(self, request: Request, id=None):
         if id:
             try:
-                project = Project.objects.prefetch_related('members').get(id=id)
+                project = Project.objects.get(id=id)
                 return Response(
                 {
                     'status': status.HTTP_200_OK,
@@ -147,7 +147,7 @@ class ProjectAPIView(APIView):
                     'data': None
                 }, status=status.HTTP_404_NOT_FOUND)
         else:
-            projects = Project.objects.all().prefetch_related('members')
+            projects = Project.objects.all()
             return Response(
             {
                 'status': status.HTTP_200_OK,
@@ -311,3 +311,42 @@ class TaskAPIView(APIView):
                 'data': None
             }, status=status.HTTP_404_NOT_FOUND)
         
+
+class UserAPIView(APIView):
+    def get(self, request: Request, id=None):
+        if id:
+            try:
+                user = User.objects.get(id=id)
+                return Response({
+                    'status': status.HTTP_200_OK,
+                    'message': "User retrieved successfully",
+                    'data': UserModelSerializer(user).data
+                }, status=status.HTTP_200_OK)
+            except ObjectDoesNotExist:
+                return Response({
+                    'status': status.HTTP_404_NOT_FOUND,
+                    'message': "User not found",
+                    'data': None
+                }, status=status.HTTP_404_NOT_FOUND)
+        else:
+            users = User.objects.all()
+            return Response({
+                'status': status.HTTP_200_OK,
+                'message': "Users retrieved successfully",
+                'data': UserModelSerializer(users, many=True).data
+            }, status=status.HTTP_200_OK)
+
+    def post(self, request: Request):
+        serializer = UserModelSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({
+                'status': status.HTTP_201_CREATED,
+                'message': "User created successfully",
+                'data': serializer.data
+            }, status=status.HTTP_201_CREATED)
+        return Response({
+            'status': status.HTTP_400_BAD_REQUEST,
+            'message': "Invalid data",
+            'data': serializer.errors
+        }, status=status.HTTP_400_BAD_REQUEST)
