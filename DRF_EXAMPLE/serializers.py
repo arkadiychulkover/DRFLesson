@@ -1,14 +1,14 @@
 from rest_framework import serializers
-from .models import Product, Project, Task, User
-
-class ProductModelSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Product
-        fields = '__all__'
+from .models import Product, Project, Task, User, Category
 
 class UserModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
+        fields = '__all__'
+
+class CategoryModelSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Category
         fields = '__all__'
 
 class ProductSerializer(serializers.Serializer):
@@ -16,6 +16,7 @@ class ProductSerializer(serializers.Serializer):
     name = serializers.CharField(max_length=100)
     description = serializers.CharField()
     price = serializers.DecimalField(max_digits=10, decimal_places=2)
+    category = CategoryModelSerializer()
 
     def get_full_info(self, obj: Product):
         return f"{obj.name} - {obj.description} - ${obj.price}"
@@ -50,3 +51,23 @@ class TaskModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = Task
         fields = '__all__'
+
+class ProductModelSerializer(serializers.ModelSerializer):
+    category = CategoryModelSerializer(read_only=True)
+
+    category_id = serializers.PrimaryKeyRelatedField(
+        queryset=Category.objects.all(),
+        source='category',
+        write_only=True
+    )
+
+    class Meta:
+        model = Product
+        fields = [
+            'id',
+            'name',
+            'description',
+            'price',
+            'category',
+            'category_id'
+        ]

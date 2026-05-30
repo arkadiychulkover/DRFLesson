@@ -3,8 +3,22 @@ import uuid
 from django.db.models import Avg
 from django.core.validators import MinValueValidator, MaxValueValidator
 
+
+class Category(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    name = models.CharField(max_length=100, unique=True)
+    description = models.TextField(blank=True)
+
+    class Meta:
+        db_table = 'drf_categories'
+
+    def __str__(self):
+        return self.name
+
+
 class Product(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='products')
     name = models.CharField(max_length=100)
     description = models.TextField()
     price = models.DecimalField(max_digits=10, decimal_places=2)
@@ -14,7 +28,6 @@ class Product(models.Model):
 
     class Meta:
         db_table = 'drf_product'
-
 
 
 class User(models.Model):
@@ -27,6 +40,7 @@ class User(models.Model):
 
     class Meta:
         db_table = 'dj_users'
+
 
 class Project(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -45,7 +59,7 @@ class Project(models.Model):
 
     def __str__(self):
         return self.name
-    
+
 
 class Task(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)

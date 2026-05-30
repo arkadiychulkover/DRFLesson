@@ -5,14 +5,15 @@ from rest_framework import status
 from rest_framework import viewsets
 from django.core.exceptions import ObjectDoesNotExist
 
-from .models import Product, Project, Task, User
-from .serializers import ProductModelSerializer, ProductSerializer, ProjectModelSerializer, TaskModelSerializer, UserModelSerializer
+from .models import Product, Project, Task, User, Category
+from .serializers import ProductModelSerializer, ProductSerializer, ProjectModelSerializer, TaskModelSerializer, UserModelSerializer, CategoryModelSerializer
 
 class ProductViewSet(viewsets.ModelViewSet):
     queryset = Product.objects.all()
     serializer_class = ProductModelSerializer
+
     def list(self, request, *args, **kwargs):
-        return supper().list(request, *args, **kwargs)
+        return super().list(request, *args, **kwargs)
     
 class ProductAPIView(APIView):
     def get(self, request: Request):
@@ -349,4 +350,38 @@ class UserAPIView(APIView):
             'status': status.HTTP_400_BAD_REQUEST,
             'message': "Invalid data",
             'data': serializer.errors
+        }, status=status.HTTP_400_BAD_REQUEST)
+    
+
+
+
+
+
+class CategoryListView(APIView):
+
+    def get(self, request):
+        categories = Category.objects.all()
+        serializer = CategoryModelSerializer(categories, many=True)
+
+        return Response({
+            "status": status.HTTP_200_OK,
+            "message": "list of categories",
+            "data": serializer.data
+        })
+
+    def post(self, request):
+        serializer = CategoryModelSerializer(data=request.data)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response({
+                "status": status.HTTP_201_CREATED,
+                "message": "category created",
+                "data": serializer.data
+            }, status=status.HTTP_201_CREATED)
+
+        return Response({
+            "status": status.HTTP_400_BAD_REQUEST,
+            "message": "invalid data",
+            "data": serializer.errors
         }, status=status.HTTP_400_BAD_REQUEST)

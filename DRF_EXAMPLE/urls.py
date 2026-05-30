@@ -19,4 +19,6 @@ urlpatterns = [
 
     path('users/', views.UserAPIView.as_view(), name='user-list'),
     path('users/<uuid:id>/', views.UserAPIView.as_view(), name='user-detail'),
+
+    path('categories/', views.CategoryListView.as_view())
 ]
