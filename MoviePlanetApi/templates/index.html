@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Movie Planet API</title>
+    <style>
+        body {
+            font-family: Arial;
+            display: flex;
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .list { width: 30%; }
+        .item {
+            padding: 8px;
+            border-bottom: 1px solid #ddd;
+            cursor: pointer;
+        }
+        .item:hover { background: #f0f0f0; }
+
+        .details {
+            width: 60%;
+            border-left: 1px solid #ccc;
+            padding-left: 20px;
+        }
+
+        button {
+            margin: 5px;
+            padding: 8px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="list">
+    <h3>API</h3>
+
+    <button onclick="load('films')">Films</button>
+    <button onclick="load('characters')">Characters</button>
+    <button onclick="load('planets')">Planets</button>
+    <button onclick="load('starships')">Starships</button>
+
+    <div id="items"></div>
+</div>
+
+<div class="details">
+    <h3>Details</h3>
+    <pre id="details"></pre>
+</div>
+
+<script>
+const API = "http://127.0.0.1:8000/api/";
+
+let current = "";
+
+function load(endpoint) {
+    current = endpoint;
+
+    fetch(API + endpoint + "/")
+        .then(res => res.json())
+        .then(data => {
+            const box = document.getElementById("items");
+            box.innerHTML = "";
+
+            data.forEach(obj => {
+                const div = document.createElement("div");
+                div.className = "item";
+
+                div.innerText = obj.name || obj.title;
+
+                div.onclick = () => loadDetail(obj.id);
+
+                box.appendChild(div);
+            });
+        });
+}
+
+function loadDetail(id) {
+    fetch(API + current + "/" + id + "/")
+        .then(res => res.json())
+        .then(data => {
+            document.getElementById("details").innerText =
+                JSON.stringify(data, null, 2);
+        });
+}
+</script>
+
+</body>
+</html>
